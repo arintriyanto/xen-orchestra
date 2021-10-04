@@ -2372,6 +2372,7 @@ const messages = {
   proxyRunningBackupsMessage:
     'The upgrade will interrupt {nJobs, number} running backup job{nJobs, plural, one {} other {s}}. Do you want to continue?',
   upgradeNeededForProxies: 'Some proxies need to be upgraded. Click here to get more information.',
+  notificationUpgradeNeededForProxies: 'Some proxies need to be upgraded.',
 
   // ----- Utils -----
   secondsFormat: '{seconds, plural, one {# second} other {# seconds}}',
