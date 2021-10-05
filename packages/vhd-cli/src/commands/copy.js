@@ -1,5 +1,4 @@
 import { getSyncedHandler } from '@xen-orchestra/fs'
-import { resolve } from 'path'
 import { openVhd, VhdFile, VhdDirectory } from 'vhd-lib'
 import Disposable from 'promise-toolbox/Disposable'
 import getopts from 'getopts'
@@ -23,7 +22,7 @@ export default async rawArgs => {
   if (args.length < 4 || help) {
     return `Usage: index.js copy <sourceRemoteUrl> <source VHD> <destionationRemoteUrl> <destination> --directory`
   }
-  const [sourceRemoteUrl,sourcePath, destRemoteUrl, destPath] = args
+  const [sourceRemoteUrl, sourcePath, destRemoteUrl, destPath] = args
 
   await Disposable.use(async function* () {
     const handler = yield getSyncedHandler({ url: 'file://' })
@@ -39,10 +38,8 @@ export default async rawArgs => {
       }
     }
     await src.readBlockAllocationTable()
-    const destHandler = yield getSyncedHandler({url: destRemoteUrl})
-    const dest = yield directory
-      ? VhdDirectory.create(destHandler, destPath)
-      : VhdFile.create(destHandler, destPath)
+    const destHandler = yield getSyncedHandler({ url: destRemoteUrl })
+    const dest = yield directory ? VhdDirectory.create(destHandler, destPath) : VhdFile.create(destHandler, destPath)
     // copy data
     dest.header = src.header
     dest.footer = src.footer

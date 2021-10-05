@@ -1,6 +1,5 @@
 import { openVhd } from 'vhd-lib'
 import { getSyncedHandler } from '@xen-orchestra/fs'
-import { resolve } from 'path'
 import Disposable from 'promise-toolbox/Disposable'
 
 const compareVhd = (src, dest, path) => {
@@ -38,9 +37,9 @@ export default async args => {
 
   await Disposable.use(async function* () {
     const sourceHandler = yield getSyncedHandler({ url: sourceRemoteUrl })
-    const src = yield openVhd(sourceHandler, resolve(sourcePath))
+    const src = yield openVhd(sourceHandler, sourcePath)
     const destHandler = yield getSyncedHandler({ url: destRemoteUrl })
-    const dest = yield openVhd(destHandler, resolve(destPath))
+    const dest = yield openVhd(destHandler, destPath)
 
     compareVhd(src.header, dest.header, 'header')
     compareVhd(src.footer, dest.footer, 'footer')
