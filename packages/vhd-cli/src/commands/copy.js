@@ -2,6 +2,7 @@ import { getSyncedHandler } from '@xen-orchestra/fs'
 import { openVhd, VhdFile, VhdDirectory } from 'vhd-lib'
 import Disposable from 'promise-toolbox/Disposable'
 import getopts from 'getopts'
+import { ConcurrencyPromise } from '../concurrencyPromise'
 
 export default async rawArgs => {
   const { directory, help, _: args } = getopts(rawArgs, {
@@ -30,10 +31,16 @@ export default async rawArgs => {
     dest.header = src.header
     dest.footer = src.footer
 
-    for await (const block of src.blocks()) {
-      await dest.writeEntireBlock(block)
+    const cp = new ConcurrencyPromise({ maxConcurrency: 16 })
+    for (let i = 0; i < src.header.maxTableEntries; i++) {
+      if (src.containsBlock(i)) {
+        await cp.add(async () => {
+          const block = await src.readBlock(i)
+          dest.writeEntireBlock(block)
+        })
+      }
     }
-
+    await cp.done()
     // copy parent locators
     for (let parentLocatorId = 0; parentLocatorId < 8; parentLocatorId++) {
       const parentLocator = await src.readParentLocator(parentLocatorId)
